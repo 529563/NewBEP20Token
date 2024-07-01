@@ -1,66 +1,42 @@
-## Foundry
+# NewBEP20token
+NewBEP20token is an ERC20-compliant token contract with added security features to prevent abuse. This token uses OpenZeppelin libraries for enhanced security and implements transfer throttling to control transaction frequency.
 
-**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**
+## Key Features
+* Fixed Supply: The total supply is set at 1,000,000,000 tokens.
+* No Minting: The contract owner cannot mint additional tokens.
+* No Blacklisting: The contract owner cannot blacklist addresses.
+* No Honeypot: The contract owner cannot set transaction fees.
+* Enabled Trading: Trading is enabled by default.
+* Transfer Throttling: Prevents excessive transactions by limiting transfer frequency.
 
-Foundry consists of:
+# State Variables
+* s_MIN_TIME_BETWEEN_TRANSFERS: Minimum time interval between consecutive transfers (1 minute).
+* s_lastTransactionBlock: Tracks the last transaction block number for each address.
+* s_lastTransactionTime: Tracks the last transaction time for each address.
 
--   **Forge**: Ethereum testing framework (like Truffle, Hardhat and DappTools).
--   **Cast**: Swiss army knife for interacting with EVM smart contracts, sending transactions and getting chain data.
--   **Anvil**: Local Ethereum node, akin to Ganache, Hardhat Network.
--   **Chisel**: Fast, utilitarian, and verbose solidity REPL.
+ # Modifiers
+* timeLimit(address _from): Ensures a certain amount of time has passed since the last transaction from the specified address.
+* throttleBlocks(uint _minBlocks): Limits the number of transactions within a specified number of blocks.
+* throttleTime(uint _minSeconds): Limits the number of transactions within a specified amount of time.
+# Functions
 
-## Documentation
+* transfer(address _recipient, uint256 _amount): Transfers tokens from the sender to the recipient, restricted by timeLimit.
+* transferFrom(address _sender, address _recipient, uint256 _amount): Allows a designated spender to transfer tokens from the sender to the recipient, restricted by timeLimit.
+* secureTransfer(address _to, uint256 _amount): Secure token transfer using nonReentrant, throttleBlocks, and throttleTime modifiers.
 
-https://book.getfoundry.sh/
-
-## Usage
-
-### Build
-
-```shell
-$ forge build
+# Usage
+To use the NewBEP20token contract, deploy it with the desired token name and symbol. The initial supply of 1,000,000,000 tokens will be minted to the deployer's address.
 ```
+solidity
 
-### Test
-
-```shell
-$ forge test
+constructor(string memory _name, string memory _symbol) ERC20(_name, _symbol) ERC20Permit(_name) {
+    uint256 initialSupply = 1000000000 * (10 ** uint256(decimals()));
+    _mint(msg.sender, initialSupply);
+}
 ```
+# Security
+This contract uses OpenZeppelin libraries for enhanced security and includes measures to prevent reentrancy attacks and excessive transaction frequency.
 
-### Format
 
-```shell
-$ forge fmt
-```
 
-### Gas Snapshots
 
-```shell
-$ forge snapshot
-```
-
-### Anvil
-
-```shell
-$ anvil
-```
-
-### Deploy
-
-```shell
-$ forge script script/Counter.s.sol:CounterScript --rpc-url <your_rpc_url> --private-key <your_private_key>
-```
-
-### Cast
-
-```shell
-$ cast <subcommand>
-```
-
-### Help
-
-```shell
-$ forge --help
-$ anvil --help
-$ cast --help
-```
