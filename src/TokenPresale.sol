@@ -169,7 +169,6 @@ contract Presale is Ownable, ReentrancyGuard {
     }
 
     uint256 public currentStage;
-    uint256 public cardboughtAmount;
     uint256 public totalUsers;
     uint256 public soldToken;
     uint256 public amountRaised;
@@ -309,6 +308,7 @@ contract Presale is Ownable, ReentrancyGuard {
             users[msg.sender].claimAbleAmount +
             numberOfTokens;
         users[msg.sender].purchasedToken += numberOfTokens;
+        emit BuyToken(msg.sender, numberOfTokens);
     }
 
     /**
@@ -344,6 +344,7 @@ contract Presale is Ownable, ReentrancyGuard {
             numberOfTokens;
 
         users[msg.sender].purchasedToken += numberOfTokens;
+        emit BuyToken(msg.sender, numberOfTokens);
     }
 
     /**
@@ -381,6 +382,7 @@ contract Presale is Ownable, ReentrancyGuard {
             numberOfTokens;
 
         users[msg.sender].purchasedToken += numberOfTokens;
+        emit BuyToken(msg.sender, numberOfTokens);
     }
 
     // claim the token.
